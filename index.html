@@ -1,591 +1,623 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#6366f1" />
-    <link rel="icon" href="icons/icon-192x192-A.png" type="image/png" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#4CAF50">
+    <meta name="description" content="Aplikasi sederhana untuk melacak kebiasaan harian Anda">
+    <title>Daily Habit Tracker</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
-    <title>TaskFlow - Kelola Tugas Anda</title>
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%234CAF50' rx='15%25'/%3E%3Cpath d='M173 350l-73-73 31-31 42 42 119-119 31 31z' fill='%23fff' stroke='%23fff' stroke-width='20'/%3E%3C/svg%3E">
+    
     <style>
+        :root {
+            --primary-color: #4CAF50;
+            --primary-dark: #388E3C;
+            --secondary-color: #2196F3;
+            --background: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --border-color: #dee2e6;
+            --success-light: #e8f5e9;
+            --shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --primary-light: #818cf8;
-            --bg-dark: #ffffff;
-            --bg-card: #1e293b;
-            --text-light: #f8fafc;
-            --text-gray: #cbd5e1;
-            --success: #22c55e;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, var(--bg-dark) 0%, #1856bb 100%);
-            color: var(--text-light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding-bottom: 80px;
-        }
-
-        .header {
-            background: #1856bb;
-            backdrop-filter: blur(10px);
-            padding: 20px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        }
-
-        .header-content {
-            max-width: 800px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
-        }
-
-        h1 {
-            font-size: 24px;
-            font-weight: 700;
-        }
-
-        .stats {
-            display: flex;
-            gap: 16px;
-            font-size: 14px;
-            color: var(--text-gray);
-        }
-
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .stat-number {
-            color: var(--primary-light);
-            font-weight: 700;
+            padding: 20px 0;
         }
 
         .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 24px 20px;
+            max-width: 600px;
         }
 
-        .input-section {
-            background: var(--bg-card);
-            padding: 24px;
-            border-radius: 16px;
-            margin-bottom: 24px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(99, 102, 241, 0.1);
+        .app-header {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .app-header h1 {
+            color: var(--primary-color);
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 1.8rem;
+        }
+
+        .app-header p {
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .stats-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .progress {
+            height: 10px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.3);
+        }
+
+        .progress-bar {
+            background: white;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .input-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
         }
 
         .input-group {
             display: flex;
-            gap: 12px;
-            margin-bottom: 16px;
+            gap: 10px;
         }
 
-        input[type="text"] {
+        #habitInput {
             flex: 1;
-            padding: 14px 18px;
-            background: var(--bg-dark);
-            border: 2px solid rgba(99, 102, 241, 0.3);
-            border-radius: 12px;
-            color: var(--text-light);
-            font-size: 16px;
-            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
         }
 
-        input[type="text"]:focus {
+        #habitInput:focus {
             outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+            border-color: var(--primary-color);
         }
 
-        .btn {
-            padding: 14px 28px;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+        .btn-add {
+            background: var(--primary-color);
             color: white;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-
-        .priority-selector {
-            display: flex;
-            gap: 8px;
-        }
-
-        .priority-btn {
-            flex: 1;
-            padding: 10px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            background: transparent;
-            color: var(--text-gray);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 14px;
-        }
-
-        .priority-btn.active {
-            border-color: currentColor;
-            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 25px;
             font-weight: 600;
-        }
-
-        .priority-btn.high {
-            color: var(--danger);
-        }
-
-        .priority-btn.medium {
-            color: var(--warning);
-        }
-
-        .priority-btn.low {
-            color: var(--success);
-        }
-
-        .filter-tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-            overflow-x: auto;
-            padding-bottom: 4px;
-        }
-
-        .filter-tab {
-            padding: 10px 20px;
-            background: var(--bg-card);
-            border: 2px solid transparent;
-            border-radius: 20px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: background 0.3s;
             white-space: nowrap;
-            font-size: 14px;
-            font-weight: 500;
-            color: #ffffff;
         }
 
-        .filter-tab.active {
-            background: var(--primary);
-            border-color: var(--primary-light);
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        .btn-add:hover {
+            background: var(--primary-dark);
         }
 
-        .tasks-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .task-item {
-            background: var(--bg-card);
+        .habits-card {
+            background: var(--card-bg);
+            border-radius: 15px;
             padding: 20px;
-            border-radius: 12px;
-            border-left: 4px solid;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .habits-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .habits-header h3 {
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            margin: 0;
+        }
+
+        .btn-reset {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-reset:hover {
+            background: #1976D2;
+        }
+
+        .habit-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .habit-item {
+            background: var(--background);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
-            gap: 16px;
-            transition: all 0.3s ease;
-            animation: slideIn 0.3s ease;
+            gap: 12px;
+            transition: all 0.3s;
+            cursor: pointer;
         }
 
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .habit-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        .task-item:hover {
-            transform: translateX(4px);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        .habit-item.completed {
+            background: var(--success-light);
         }
 
-        .task-item.high {
-            border-left-color: var(--danger);
+        .habit-item.completed .habit-text {
+            text-decoration: line-through;
+            color: var(--text-secondary);
         }
 
-        .task-item.medium {
-            border-left-color: var(--warning);
-        }
-
-        .task-item.low {
-            border-left-color: var(--success);
-        }
-
-        .task-checkbox {
+        .habit-checkbox {
             width: 24px;
             height: 24px;
-            border: 2px solid var(--primary);
-            border-radius: 6px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            transition: all 0.3s ease;
+            accent-color: var(--primary-color);
         }
 
-        .task-checkbox:hover {
-            background: rgba(99, 102, 241, 0.1);
-        }
-
-        .task-checkbox.checked {
-            background: var(--primary);
-        }
-
-        .task-content {
+        .habit-text {
             flex: 1;
-        }
-
-        .task-text {
-            font-size: 16px;
-            margin-bottom: 4px;
-        }
-
-        .task-text.completed {
-            text-decoration: line-through;
-            opacity: 0.6;
-        }
-
-        .task-meta {
-            display: flex;
-            gap: 12px;
-            font-size: 12px;
-            color: var(--text-gray);
-        }
-
-        .task-time {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .task-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn-icon {
-            width: 36px;
-            height: 36px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            font-size: 18px;
+            color: var(--text-primary);
+            font-size: 1rem;
         }
 
         .btn-delete {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-size: 0.9rem;
         }
 
         .btn-delete:hover {
-            background: var(--danger);
-            color: white;
+            background: #d32f2f;
         }
 
         .empty-state {
             text-align: center;
-            padding: 60px 20px;
-            color: var(--text-gray);
+            padding: 40px 20px;
+            color: var(--text-secondary);
         }
 
-        .empty-icon {
-            font-size: 64px;
-            margin-bottom: 16px;
-            opacity: 0.5;
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            opacity: 0.3;
         }
 
-        .progress-bar {
-            background: var(--bg-card);
-            height: 8px;
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 16px 0;
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            opacity: 0.9;
         }
 
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--primary-light));
-            transition: width 0.5s ease;
-            border-radius: 4px;
+        .install-prompt {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            display: none;
+            align-items: center;
+            gap: 15px;
         }
 
-        @media (max-width: 640px) {
-            .header-content {
-                flex-direction: column;
-                gap: 12px;
+        .install-prompt.show {
+            display: flex;
+        }
+
+        .install-prompt i {
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        .install-content {
+            flex: 1;
+        }
+
+        .install-content h4 {
+            font-size: 1rem;
+            margin: 0 0 5px 0;
+            color: var(--text-primary);
+        }
+
+        .install-content p {
+            font-size: 0.85rem;
+            margin: 0;
+            color: var(--text-secondary);
+        }
+
+        .btn-install {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 576px) {
+            .app-header h1 {
+                font-size: 1.5rem;
+            }
+
+            .stat-number {
+                font-size: 1.5rem;
             }
 
             .input-group {
                 flex-direction: column;
             }
 
-            .stats {
+            .btn-add {
                 width: 100%;
-                justify-content: space-around;
+            }
+
+            .install-prompt {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .btn-install {
+                width: 100%;
             }
         }
 
-        .logo h1 {
-            font-size: 50px;
-            font-weight: 800;
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
-
 <body>
-    <header class="header">
-        <div class="header-content">
-            <div class="logo">
-                <div class="logo-icon">✓</div>
-                <h1 class="text-judul">TaskFlow</h1>
+    <div class="container">
+        <!-- Install Prompt -->
+        <div id="installPrompt" class="install-prompt">
+            <i class="bi bi-download"></i>
+            <div class="install-content">
+                <h4>Install Aplikasi</h4>
+                <p>Tambahkan ke home screen untuk akses lebih mudah</p>
             </div>
-            <div class="stats">
+            <button id="installButton" class="btn-install">Install</button>
+        </div>
+
+        <!-- Header -->
+        <div class="app-header">
+            <h1><i class="bi bi-check2-circle"></i> Daily Habit Tracker</h1>
+            <p>Bangun kebiasaan positif setiap hari</p>
+        </div>
+
+        <!-- Stats Card -->
+        <div class="stats-card">
+            <div class="stats-content">
                 <div class="stat-item">
-                    <span>📝</span>
-                    <span>Total: <span class="stat-number" id="totalTasks">0</span></span>
+                    <span id="completedCount" class="stat-number">0</span>
+                    <span class="stat-label">Selesai</span>
                 </div>
                 <div class="stat-item">
-                    <span>✅</span>
-                    <span>Selesai: <span class="stat-number" id="completedTasks">0</span></span>
+                    <span id="totalCount" class="stat-number">0</span>
+                    <span class="stat-label">Total Kebiasaan</span>
                 </div>
+                <div class="stat-item">
+                    <span id="percentage" class="stat-number">0%</span>
+                    <span class="stat-label">Progress</span>
+                </div>
+            </div>
+            <div class="progress">
+                <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
             </div>
         </div>
-    </header>
 
-    <div class="container">
-        <div class="input-section">
+        <!-- Input Card -->
+        <div class="input-card">
             <div class="input-group">
-                <input type="text" id="taskInput" placeholder="Tambahkan tugas baru..."
-                    onkeypress="if(event.key==='Enter') addTask()" />
-                <button class="btn btn-primary" onclick="addTask()">
-                    <span>➕</span>
-                    <span>Tambah</span>
+                <input 
+                    type="text" 
+                    id="habitInput" 
+                    placeholder="Masukkan kebiasaan baru..." 
+                    maxlength="100"
+                >
+                <button id="addButton" class="btn-add">
+                    <i class="bi bi-plus-lg"></i> Tambah
                 </button>
             </div>
-            <div class="priority-selector">
-                <button class="priority-btn high" onclick="setPriority('high')">🔴 Tinggi</button>
-                <button class="priority-btn medium active" onclick="setPriority('medium')">🟡 Sedang</button>
-                <button class="priority-btn low" onclick="setPriority('low')">🟢 Rendah</button>
-            </div>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressBar" style="width: 0%"></div>
-            </div>
         </div>
 
-        <div class="filter-tabs">
-            <button class="filter-tab active" onclick="filterTasks('all')">Semua</button>
-            <button class="filter-tab" onclick="filterTasks('active')">Aktif</button>
-            <button class="filter-tab" onclick="filterTasks('completed')">Selesai</button>
-            <button class="filter-tab" onclick="filterTasks('high')">🔴 Prioritas Tinggi</button>
-            <button class="filter-tab" onclick="filterTasks('medium')">🟡 Prioritas Sedang</button>
-            <button class="filter-tab" onclick="filterTasks('low')">🟢 Prioritas Rendah</button>
+        <!-- Habits List Card -->
+        <div class="habits-card">
+            <div class="habits-header">
+                <h3><i class="bi bi-list-check"></i> Daftar Kebiasaan</h3>
+                <button id="resetButton" class="btn-reset">
+                    <i class="bi bi-arrow-clockwise"></i> Reset Hari Ini
+                </button>
+            </div>
+            <ul id="habitList" class="habit-list">
+                <!-- Habits will be inserted here -->
+            </ul>
         </div>
 
-        <div class="tasks-list" id="tasksList"></div>
+        <!-- Footer -->
+        <div class="footer">
+            <p><i class="bi bi-heart-fill"></i> Bangun kebiasaan positif, raih kesuksesan!</p>
+        </div>
     </div>
 
     <script>
-        let tasks = [];
-        let currentPriority = 'medium';
-        let currentFilter = 'all';
-
-        function loadTasks() {
-            const saved = localStorage.getItem('taskflow_tasks');
-            if (saved) {
-                tasks = JSON.parse(saved);
-                renderTasks();
-            }
-        }
-
-        function saveTasks() {
-            localStorage.setItem('taskflow_tasks', JSON.stringify(tasks));
-        }
-
-        function setPriority(priority) {
-            currentPriority = priority;
-            document.querySelectorAll('.priority-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
-        }
-
-        function addTask() {
-            const input = document.getElementById('taskInput');
-            const text = input.value.trim();
-
-            if (text === '') return;
-
-            const task = {
-                id: Date.now(),
-                text: text,
-                completed: false,
-                priority: currentPriority,
-                createdAt: new Date().toLocaleString('id-ID')
-            };
-
-            tasks.unshift(task);
-            input.value = '';
-            saveTasks();
-            renderTasks();
-        }
-
-        function toggleTask(id) {
-            const task = tasks.find(t => t.id === id);
-            if (task) {
-                task.completed = !task.completed;
-                saveTasks();
-                renderTasks();
-            }
-        }
-
-        function deleteTask(id) {
-            tasks = tasks.filter(t => t.id !== id);
-            saveTasks();
-            renderTasks();
-        }
-
-        function filterTasks(filter) {
-            currentFilter = filter;
-            document.querySelectorAll('.filter-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            renderTasks();
-        }
-
-        function renderTasks() {
-            const container = document.getElementById('tasksList');
-
-            let filteredTasks = tasks;
-
-            if (currentFilter === 'active') {
-                filteredTasks = tasks.filter(t => !t.completed);
-            } else if (currentFilter === 'completed') {
-                filteredTasks = tasks.filter(t => t.completed);
-            } else if (['high', 'medium', 'low'].includes(currentFilter)) {
-                filteredTasks = tasks.filter(t => t.priority === currentFilter);
-            }
-
-            if (filteredTasks.length === 0) {
-                container.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-icon">📋</div>
-            <h3>Tidak ada tugas</h3>
-            <p>Mulai tambahkan tugas baru untuk memulai!</p>
-          </div>
-        `;
-            } else {
-                container.innerHTML = filteredTasks.map(task => `
-          <div class="task-item ${task.priority}">
-            <div class="task-checkbox ${task.completed ? 'checked' : ''}" onclick="toggleTask(${task.id})">
-              ${task.completed ? '✓' : ''}
-            </div>
-            <div class="task-content">
-              <div class="task-text ${task.completed ? 'completed' : ''}">${task.text}</div>
-              <div class="task-meta">
-                <span class="task-time">🕒 ${task.createdAt}</span>
-                <span>📌 ${task.priority === 'high' ? 'Tinggi' : task.priority === 'medium' ? 'Sedang' : 'Rendah'}</span>
-              </div>
-            </div>
-            <div class="task-actions">
-              <button class="btn-icon btn-delete" onclick="deleteTask(${task.id})">🗑️</button>
-            </div>
-          </div>
-        `).join('');
-            }
-
-            updateStats();
-        }
-
-        function updateStats() {
-            const total = tasks.length;
-            const completed = tasks.filter(t => t.completed).length;
-            const progress = total > 0 ? (completed / total) * 100 : 0;
-
-            document.getElementById('totalTasks').textContent = total;
-            document.getElementById('completedTasks').textContent = completed;
-            document.getElementById('progressBar').style.width = progress + '%';
-        }
-
-        loadTasks();
-
+        // PWA Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./service-worker.js')
-                    .then(() => console.log('Service Worker registered'))
-                    .catch(err => console.error('Service Worker error:', err));
+                    .then(reg => console.log('Service Worker registered successfully'))
+                    .catch(err => console.log('Service Worker registration failed:', err));
             });
         }
+
+        // PWA Install Prompt
+        let deferredPrompt;
+        const installPrompt = document.getElementById('installPrompt');
+        const installButton = document.getElementById('installButton');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installPrompt.classList.add('show');
+        });
+
+        installButton.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                installPrompt.classList.remove('show');
+            }
+        });
+
+        // App Logic
+        class HabitTracker {
+            constructor() {
+                this.habits = this.loadHabits();
+                this.init();
+            }
+
+            init() {
+                this.renderHabits();
+                this.updateStats();
+                this.attachEventListeners();
+                this.checkNewDay();
+            }
+
+            loadHabits() {
+                const saved = localStorage.getItem('habits');
+                return saved ? JSON.parse(saved) : [];
+            }
+
+            saveHabits() {
+                localStorage.setItem('habits', JSON.stringify(this.habits));
+            }
+
+            checkNewDay() {
+                const lastDate = localStorage.getItem('lastDate');
+                const today = new Date().toDateString();
+                
+                if (lastDate !== today) {
+                    // Reset all habits for new day
+                    this.habits.forEach(habit => habit.completed = false);
+                    this.saveHabits();
+                    localStorage.setItem('lastDate', today);
+                }
+            }
+
+            addHabit(text) {
+                if (!text.trim()) return;
+                
+                const habit = {
+                    id: Date.now(),
+                    text: text.trim(),
+                    completed: false,
+                    createdAt: new Date().toISOString()
+                };
+                
+                this.habits.push(habit);
+                this.saveHabits();
+                this.renderHabits();
+                this.updateStats();
+            }
+
+            toggleHabit(id) {
+                const habit = this.habits.find(h => h.id === id);
+                if (habit) {
+                    habit.completed = !habit.completed;
+                    this.saveHabits();
+                    this.renderHabits();
+                    this.updateStats();
+                }
+            }
+
+            deleteHabit(id) {
+                this.habits = this.habits.filter(h => h.id !== id);
+                this.saveHabits();
+                this.renderHabits();
+                this.updateStats();
+            }
+
+            resetDaily() {
+                this.habits.forEach(habit => habit.completed = false);
+                this.saveHabits();
+                this.renderHabits();
+                this.updateStats();
+            }
+
+            renderHabits() {
+                const habitList = document.getElementById('habitList');
+                
+                if (this.habits.length === 0) {
+                    habitList.innerHTML = `
+                        <div class="empty-state">
+                            <i class="bi bi-clipboard-x"></i>
+                            <p>Belum ada kebiasaan. Yuk tambahkan kebiasaan pertamamu!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                habitList.innerHTML = this.habits.map(habit => `
+                    <li class="habit-item ${habit.completed ? 'completed' : ''} fade-in" data-id="${habit.id}">
+                        <input 
+                            type="checkbox" 
+                            class="habit-checkbox" 
+                            ${habit.completed ? 'checked' : ''}
+                            onchange="app.toggleHabit(${habit.id})"
+                        >
+                        <span class="habit-text">${this.escapeHtml(habit.text)}</span>
+                        <button class="btn-delete" onclick="app.deleteHabit(${habit.id})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </li>
+                `).join('');
+            }
+
+            updateStats() {
+                const total = this.habits.length;
+                const completed = this.habits.filter(h => h.completed).length;
+                const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+                document.getElementById('totalCount').textContent = total;
+                document.getElementById('completedCount').textContent = completed;
+                document.getElementById('percentage').textContent = percentage + '%';
+                document.getElementById('progressBar').style.width = percentage + '%';
+            }
+
+            attachEventListeners() {
+                const habitInput = document.getElementById('habitInput');
+                const addButton = document.getElementById('addButton');
+                const resetButton = document.getElementById('resetButton');
+
+                addButton.addEventListener('click', () => {
+                    this.addHabit(habitInput.value);
+                    habitInput.value = '';
+                });
+
+                habitInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.addHabit(habitInput.value);
+                        habitInput.value = '';
+                    }
+                });
+
+                resetButton.addEventListener('click', () => {
+                    if (confirm('Reset semua checklist hari ini?')) {
+                        this.resetDaily();
+                    }
+                });
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+
+        // Initialize App
+        const app = new HabitTracker();
+
+        // Set last date on first load
+        if (!localStorage.getItem('lastDate')) {
+            localStorage.setItem('lastDate', new Date().toDateString());
+        }
     </script>
-
 </body>
-
 </html>
