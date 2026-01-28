@@ -1,74 +1,65 @@
-const CACHE_NAME = "pwa-template-v2";
-const BASE_URL = self.registration.scope;
-
+const CACHE_NAME = 'habit-tracker-v1';
 const urlsToCache = [
-  `${BASE_URL}`,
-  `${BASE_URL}index.html`,
-  `${BASE_URL}offline.html`,
-  `${BASE_URL}assets/style.css`,
-  `${BASE_URL}manifest.json`,
-  `${BASE_URL}icons/icon-192x192.png`,
-  `${BASE_URL}icons/icon-512x512.png`,
+  './daily-habit-tracker.html',
+  './manifest.json',
+  'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
+  'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css'
 ];
 
-// Install Service Worker & simpan file ke cache
-self.addEventListener("install", event => {
-  self.skipWaiting(); // langsung aktif tanpa reload manual
+// Install event - cache files
+self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(urlsToCache))
-      .catch(err => console.error("Cache gagal dimuat:", err))
+      .then(cache => {
+        console.log('Opened cache');
+        return cache.addAll(urlsToCache);
+      })
   );
 });
 
-// Aktivasi dan hapus cache lama
-self.addEventListener("activate", event => {
+// Fetch event - serve from cache, fallback to network
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => {
+        // Cache hit - return response
+        if (response) {
+          return response;
+        }
+        return fetch(event.request).then(
+          response => {
+            // Check if we received a valid response
+            if (!response || response.status !== 200 || response.type !== 'basic') {
+              return response;
+            }
+
+            // Clone the response
+            const responseToCache = response.clone();
+
+            caches.open(CACHE_NAME)
+              .then(cache => {
+                cache.put(event.request, responseToCache);
+              });
+
+            return response;
+          }
+        );
+      })
+  );
+});
+
+// Activate event - clean up old caches
+self.addEventListener('activate', event => {
+  const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
-    (async () => {
-      const keys = await caches.keys();
-      await Promise.all(
-        keys.map(key => {
-          if (key !== CACHE_NAME) {
-            console.log("Menghapus cache lama:", key);
-            return caches.delete(key);
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheWhitelist.indexOf(cacheName) === -1) {
+            return caches.delete(cacheName);
           }
         })
       );
-      await self.clients.claim(); // langsung klaim kontrol ke halaman
-    })()
+    })
   );
-});
-
-// Fetch event: cache-first untuk file lokal, network-first untuk API
-self.addEventListener("fetch", event => {
-  const request = event.request;
-  const url = new URL(request.url);
-
-  // Abaikan permintaan Chrome Extension, analytics, dll.
-  if (url.protocol.startsWith("chrome-extension")) return;
-  if (request.method !== "GET") return;
-
-  // File lokal (statis)
-  if (url.origin === self.location.origin) {
-    event.respondWith(
-      caches.match(request).then(response => {
-        return (
-          response ||
-          fetch(request).catch(() => caches.match(`${BASE_URL}offline.html`))
-        );
-      })
-    );
-  } 
-  // Resource eksternal (API, CDN, dsb.)
-  else {
-    event.respondWith(
-      fetch(request)
-        .then(networkResponse => {
-          const clone = networkResponse.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
-          return networkResponse;
-        })
-        .catch(() => caches.match(request))
-    );
-  }
 });
